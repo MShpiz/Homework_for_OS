@@ -2,6 +2,7 @@
 #include <stdio.h>
 #include <string>
 #include <unistd.h>
+#include <sys/wait.h>
 
 using namespace std;
 
@@ -83,11 +84,18 @@ int main(int argc, char *argv[]) {
     printf("fibo result: %lu \n", res2);
   }
 
-  if (chpid == 0) { // если поток ребёнок делаем ему другого ребёнка
+  if (chpid != 0) { // если поток родитель делает другого ребёнка
+    wait(NULL);
     other_chpid = fork();
+  } 
+
+  if (chpid != 0 && other_chpid != 0) {
+    printf("I am parent. \nMy pid = %d, my parent is %d, I made another child, it is %d\nI "
+     "count Fibo\n",
+     (int)pid, (int)ppid, (int)other_chpid);
   }
 
-  if (other_chpid == 0) {// если поток другой ребёнок запускаем просмотр каталога
+  if (other_chpid == 0 && chpid != 0) {// если поток другой ребёнок запускаем просмотр каталога
     pid = getpid();
     ppid = getppid();
     printf("I am other child. \nMy pid = %d, my parent is %d and I have no "
