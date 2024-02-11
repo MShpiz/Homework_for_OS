@@ -41,7 +41,7 @@ int main(int argv, char* args[]) {
     // printf("%s", buffer);
 
     // записываем эту часть во второй файл
-    write_bytes = write(fd2, buffer, read_bytes+1);
+    write_bytes = write(fd2, buffer, read_bytes);
     if(write_bytes == -1) {
       printf("Can\'t write this file\n");
       exit(-1);
