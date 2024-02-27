@@ -12,18 +12,19 @@ pid_t other_pid;
 int number;
 bool bits[32];
 
-void makeBitArray() {
+void makeBitArray() { // записываем число в двоичном виде в массив булов, чтобы дальше с ним было проще работать.
   for (int i = 31; i >= 0; i--) {
     bits[i] = (number & (1 << i)) != 0;
   }
 }
 
-void sendCurrByte() {
-  if (currByteCount < 0) {
+void sendCurrBit() {
+  if (currByteCount < 0) { // если все передали передаем сигнал "конца передачи" - SIGPWR, и завершаем программу.
     kill(other_pid, SIGPWR);
     kill(pid, SIGKILL);
     return;
   }
+  // отсылаем один из сигналов в зависимости от текущего бита
   if (!bits[currByteCount]) {
     kill(other_pid, SIGUSR1);
     printf("sent 0\n");
@@ -33,9 +34,9 @@ void sendCurrByte() {
   }
 }
 
-void gotNumber(int nsig) {
+void gotNumber(int nsig) { // когда пришёл сигнал "подтверждения получения" посылаем следующий бит
   currByteCount--;
-  sendCurrByte();
+  sendCurrBit();
 }
 
 int main(void) {
@@ -49,7 +50,7 @@ int main(void) {
   a = scanf("%d", &number);
   (void)signal(SIGUSR1, gotNumber);
   makeBitArray();
-  sendCurrByte();
+  sendCurrBit();
   while (1);
   
   return 0;
