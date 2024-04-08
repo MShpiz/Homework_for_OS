@@ -156,6 +156,7 @@ int main() {
       perror("sem_post: Incorrect post of mutex semaphore");
       exit(-1);
     };
+    lastIdx = (lastIdx + 1 + i)%BUF_SIZE;
   }
 }
 
